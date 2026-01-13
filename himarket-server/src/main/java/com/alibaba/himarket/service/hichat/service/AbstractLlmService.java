@@ -183,8 +183,22 @@ public abstract class AbstractLlmService implements LlmService {
 
     @Override
     public boolean match(String protocol) {
+        // Map OPENAI_COMPATIBLE to OpenAI/V1 for compatibility
+        String normalizedProtocol = normalizeProtocol(protocol);
+        
         return getProtocols().stream()
-                .anyMatch(p -> StrUtil.equalsIgnoreCase(p.getProtocol(), protocol));
+                .anyMatch(p -> StrUtil.equalsIgnoreCase(p.getProtocol(), normalizedProtocol));
+    }
+    
+    /**
+     * Normalize protocol string for matching
+     * Maps OPENAI_COMPATIBLE to OpenAI/V1 since they are the same protocol
+     */
+    private String normalizeProtocol(String protocol) {
+        if ("OPENAI_COMPATIBLE".equalsIgnoreCase(protocol)) {
+            return "OpenAI/V1";
+        }
+        return protocol;
     }
 
     /**
